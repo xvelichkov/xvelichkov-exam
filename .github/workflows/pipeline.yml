@@ -2,25 +2,33 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   test-unit:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js 18.x
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18.x
-        cache: 'npm'
-    - name: Install dependencies 
-      run: npm install
-    - name: Execute unit tests
-      run: npm run test:unit
-    - name: Show SoftUnit username
-      run: echo xvelichkov
+      - uses: actions/checkout@v3
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: "npm"
+      - name: Install dependencies
+        run: npm install
+      - name: Execute unit tests
+        run: npm run test:unit
+      - name: Show SoftUnit username
+        run: echo xvelichkov
+  deploy:
+    needs: test-unit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Render.com
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.MY_RENDER_SERVICE_ID }}
+          api-key: ${{ secrets.MY_RENDER_API_KEY }}
